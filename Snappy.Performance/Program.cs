@@ -172,7 +172,7 @@ namespace Snappy.Performance
             [Option('x', "outputxml", Default = false, HelpText = "Save results to xml file.")]
             public bool WriteXml { get; set; }
 
-            [Option('o', "xmldirectory", HelpText = "Directory to load/store xml results.", Default = @"..\..\..\..\perfdata")]
+            [Option('o', "xmldirectory", HelpText = "Directory to load/store xml results.", Default = @"..\..\..\..\perfdata")] // TODO Path.combine
             public string XmlDirectory { get; set; }
 
             [Option('d', "datadirectory", HelpText = "Directory to load test files.", Default = @"..\..\..\..\testdata")]

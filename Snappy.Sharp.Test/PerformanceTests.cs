@@ -30,7 +30,7 @@ namespace Snappy.Sharp.Test
         {
             get
             {
-                var files = Directory.GetFiles(@"..\..\..\..\testdata");
+                var files = Directory.GetFiles(Path.Combine("..", "..", "..", "..", "testdata"));
                 return files.Select(f => new object[] {f});
             } 
         }
