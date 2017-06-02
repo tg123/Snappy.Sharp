@@ -98,14 +98,14 @@ namespace Snappy.Sharp
                 stream.Flush();
         }
 
-        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            throw new NotImplementedException();
-        }
-        public override int EndRead(IAsyncResult asyncResult)
-        {
-            throw new NotImplementedException();
-        }
+//        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+//        {
+//            throw new NotImplementedException();
+//        }
+//        public override int EndRead(IAsyncResult asyncResult)
+//        {
+//            throw new NotImplementedException();
+//        }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
@@ -185,14 +185,14 @@ namespace Snappy.Sharp
             return length;
         }
 
-        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            throw new NotImplementedException();
-        }
-        public override void EndWrite(IAsyncResult asyncResult)
-        {
-            throw new NotImplementedException();
-        }
+//        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+//        {
+//            throw new NotImplementedException();
+//        }
+//        public override void EndWrite(IAsyncResult asyncResult)
+//        {
+//            throw new NotImplementedException();
+//        }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
@@ -230,7 +230,7 @@ namespace Snappy.Sharp
                 {
                     if (disposing && !leaveStreamOpen && stream != null)
                     {
-                        stream.Close();
+                        stream.Dispose();
                     }
                 }
                 finally

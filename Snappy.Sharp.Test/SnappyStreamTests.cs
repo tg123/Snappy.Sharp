@@ -85,7 +85,8 @@ namespace Snappy.Sharp.Test
             using (var target = new SnappyStream(ms, CompressionMode.Compress, true, false))
             {
             }
-            Assert.Equal(new byte[] {0xff, (byte)'s', (byte)'N', (byte)'a', (byte)'P', (byte)'p', (byte)'Y'}, ms.GetBuffer().Take((int) ms.Length));
+            ms.TryGetBuffer(out var msb);
+            Assert.Equal(new byte[] {0xff, (byte)'s', (byte)'N', (byte)'a', (byte)'P', (byte)'p', (byte)'Y'}, msb.Take((int) ms.Length));
         }
 
         [Fact]
@@ -97,7 +98,8 @@ namespace Snappy.Sharp.Test
                 byte[] buffer = new byte[100];
                 target.Write(buffer, 0, buffer.Length); 
             }
-            Assert.Equal(new byte[] { 255, 115, 78, 97, 80, 112, 89, 0, 0, 0, 8, 0, 100, 0, 254, 1, 0, 130, 1, 0, 0 }, ms.GetBuffer().Take((int) ms.Length));
+            ms.TryGetBuffer(out var msb);
+            Assert.Equal(new byte[] { 255, 115, 78, 97, 80, 112, 89, 0, 0, 0, 8, 0, 100, 0, 254, 1, 0, 130, 1, 0, 0 }, msb.Take((int) ms.Length));
         }
 
         [Fact]

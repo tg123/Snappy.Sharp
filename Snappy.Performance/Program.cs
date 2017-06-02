@@ -157,92 +157,93 @@ namespace Snappy.Performance
 
         private class Options
         {
-            [Option("p", "pref", DefaultValue = false, HelpText = "Run performance.")]
+            [Option('p', "pref", Default = false, HelpText = "Run performance.")]
             public bool Performance { get; set; }
 
-            [Option("i", "iter", DefaultValue = 100, HelpText = "Number of iterations to run.")]
+            [Option('i', "iter", Default = 100, HelpText = "Number of iterations to run.")]
             public int Iterations { get; set; }
 
-            [Option("c", "compare", DefaultValue = false, HelpText = "Compare to previous results.")]
+            [Option('c', "compare", Default = false, HelpText = "Compare to previous results.")]
             public bool Compare { get; set; }
 
-            [Option("v", "verify", DefaultValue = false, HelpText = "Run readfile => compress => decompress => compare results")]
+            [Option('v', "verify", Default = false, HelpText = "Run readfile => compress => decompress => compare results")]
             public bool Verify { get; set; }
 
-            [Option("x", "outputxml", DefaultValue = false, HelpText = "Save results to xml file.")]
+            [Option('x', "outputxml", Default = false, HelpText = "Save results to xml file.")]
             public bool WriteXml { get; set; }
 
-            [Option("o", "xmldirectory", HelpText = "Directory to load/store xml results.", DefaultValue = @"..\..\..\..\perfdata")]
+            [Option('o', "xmldirectory", HelpText = "Directory to load/store xml results.", Default = @"..\..\..\..\perfdata")]
             public string XmlDirectory { get; set; }
 
-            [Option("d", "datadirectory", HelpText = "Directory to load test files.", DefaultValue = @"..\..\..\..\testdata")]
+            [Option('d', "datadirectory", HelpText = "Directory to load test files.", Default = @"..\..\..\..\testdata")]
             public string TestDataDirectory { get; set; }
 
-            [HelpOption]
-            public string GetUsage()
-            {
-                var usage = new StringBuilder();
-                usage.AppendLine("Snappy.Performance.exe");
-                usage.AppendLine("\t-c or --compare to indicate comparision to previous results");
-                usage.AppendLine("\t-v or --verify to indicate data verficiation of round trip");
-                usage.AppendLine("\t-x or --outputxml to indicate save output to xml");
-                usage.AppendLine("\t-d<directory> or --datadirectory<directory> specifies source directory for files to test");
-                usage.AppendLine("\t-o<directory> or --xmldirectory<directory> specifies directory to save xml results");
-                return usage.ToString();
-            }
+//            [HelpOption]
+//            public string GetUsage()
+//            {
+//                var usage = new StringBuilder();
+//                usage.AppendLine("Snappy.Performance.exe");
+//                usage.AppendLine("\t-c or --compare to indicate comparision to previous results");
+//                usage.AppendLine("\t-v or --verify to indicate data verficiation of round trip");
+//                usage.AppendLine("\t-x or --outputxml to indicate save output to xml");
+//                usage.AppendLine("\t-d<directory> or --datadirectory<directory> specifies source directory for files to test");
+//                usage.AppendLine("\t-o<directory> or --xmldirectory<directory> specifies directory to save xml results");
+//                return usage.ToString();
+//            }
         }
 
-        static string xmlPath = @"C:\temp\snappyoutput";
+        static string xmlPath = @"snappyoutput";
         static void Main(string[] args)
         {
-            var options = new Options();
-            if (CommandLineParser.Default.ParseArguments(args, options))
-            {
-                int iters = options.Iterations;
-                if (Directory.Exists(options.XmlDirectory))
-                    xmlPath = options.XmlDirectory;
-                else
+            Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(options =>
                 {
-                    throw new DirectoryNotFoundException("Could not find specified xml directory.");
-                }
-
-                List<CompressionResult> results = new List<CompressionResult>();
-                foreach (string fileName in FileMap.Keys.Select(file => Path.Combine(options.TestDataDirectory, file)))
-                {
-                    if (options.Verify)
+                    int iters = options.Iterations;
+                    if (Directory.Exists(options.XmlDirectory))
+                        xmlPath = options.XmlDirectory;
+                    else
                     {
-                        VerifyRoundTrip(fileName);
-                        Console.WriteLine("Verified {0}", Path.GetFileName(fileName));
+                        throw new DirectoryNotFoundException("Could not find specified xml directory.");
                     }
-                    if (options.Performance)
+
+                    List<CompressionResult> results = new List<CompressionResult>();
+                    foreach (string fileName in FileMap.Keys.Select(file => Path.Combine(options.TestDataDirectory,
+                        file)))
                     {
-                        results.Add(RunCompression(fileName, iters));
-                        results.Add(RunDecompression(fileName, iters));
+                        if (options.Verify)
+                        {
+                            VerifyRoundTrip(fileName);
+                            Console.WriteLine("Verified {0}", Path.GetFileName(fileName));
+                        }
+                        if (options.Performance)
+                        {
+                            results.Add(RunCompression(fileName, iters));
+                            results.Add(RunDecompression(fileName, iters));
+                        }
                     }
-                }
 
 
-                if (options.Compare)
-                {
-                    Console.WriteLine(CompressionResult.HeaderString);
-                    CompareResults(results.Where(r => r.Direction == CompressionDirection.Decompress));
-                    Console.WriteLine();
-                    CompareResults(results.Where(r => r.Direction == CompressionDirection.Compress));
+                    if (options.Compare)
+                    {
+                        Console.WriteLine(CompressionResult.HeaderString);
+                        CompareResults(results.Where(r => r.Direction == CompressionDirection.Decompress));
+                        Console.WriteLine();
+                        CompareResults(results.Where(r => r.Direction == CompressionDirection.Compress));
 
-                }
-                else
-                {
-                    foreach (var result in results.Where(r => r.Direction == CompressionDirection.Decompress))
-                        Console.WriteLine(result);
+                    }
+                    else
+                    {
+                        foreach (var result in results.Where(r => r.Direction == CompressionDirection.Decompress))
+                            Console.WriteLine(result);
 
-                    foreach (var result in results.Where(r => r.Direction == CompressionDirection.Compress))
-                        Console.WriteLine(result);
-                }
-                if (options.WriteXml)
-                {
-                    WriteResultsAsXml(results);
-                }
-            }
+                        foreach (var result in results.Where(r => r.Direction == CompressionDirection.Compress))
+                            Console.WriteLine(result);
+                    }
+                    if (options.WriteXml)
+                    {
+                        WriteResultsAsXml(results);
+                    }
+                });
         }
 
         private static void VerifyRoundTrip(string fileName)
