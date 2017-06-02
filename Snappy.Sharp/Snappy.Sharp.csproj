@@ -6,6 +6,13 @@
 
   <PropertyGroup>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <PackageProjectUrl>https://github.com/jeffesp/Snappy.Sharp</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/jeffesp/Snappy.Sharp/blob/master/License.txt</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/jeffesp/Snappy.Sharp</RepositoryUrl>
+    <Authors>Jeff Esp</Authors>
+    <Company />
+    <Product />
+    <Description>An implementation of Google's Snappy compression algorithm in C#.</Description>
   </PropertyGroup>
 
 </Project>
